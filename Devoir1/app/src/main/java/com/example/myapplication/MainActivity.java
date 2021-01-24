@@ -2,27 +2,40 @@ package com.example.myapplication;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import org.w3c.dom.Text;
+
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
 
+    Button btn;
+    TextView text;
+    TextView text2;
+    int tries = 1;
+    int maxTries = 5;
+    int compteur = 1;
+    boolean started = false;
+    boolean isYellow = false;
+    boolean isGreen = false;
+    long startime;
+    long total = 0;
+    ArrayList<Long> test = new ArrayList<Long>();
 
-    private int tries = 1;
-    private int maxTries = 5;
-    private boolean started = false;
-    private boolean isYellow = false;
-    private long startime;
-
-    private Timer timer = new Timer();
+    Handler timer = new Handler();
     public static MainActivity activity = null;
 
     @Override
@@ -31,59 +44,104 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         activity = this;
 
-        Button btn = (Button) findViewById(R.id.button3);
-        btn.setOnClickListener(new View.OnClickListener()
-        {
-            public void onClick(View v)
-            {
-                MainActivity.activity.clickHandler();
-            }
-        });
+        btn = findViewById(R.id.button3);
+        text = findViewById(R.id.textView3);
+        text2 = findViewById(R.id.textView4);
+
+        btn.setOnClickListener(b1_listener);
     }
 
     /**
      * Method used when user presses the button
      */
-    public void clickHandler()
-    {
-        Button btn = (Button) findViewById(R.id.button3);
-        if(this.started)
+
+
+    View.OnClickListener b1_listener = new View.OnClickListener(){
+        @Override
+        public void onClick(View v) {
+        if(started)
         {
-            if(this.isYellow)
+            btn.setText("Veuillez cliquer quand le bouton sera jaune");
+            if(isYellow)
             {
-                long elaspeTime = System.currentTimeMillis() - this.startime;
-                btn.setText(String.valueOf(elaspeTime) + "ms");
-                this.startime = System.currentTimeMillis();
+                long elapseTime = System.currentTimeMillis() - startime;
+                test.add(elapseTime);
+                total = total + elapseTime;
+              //  btn.setText(String.valueOf(elapseTime) + "ms");
+                startime = System.currentTimeMillis();
                 btn.setBackgroundColor(getResources().getColor(R.color.green));
+                compteur++;
+                btn.setText("");
+                text2.setText("succes ! vous avez clique en" +  elapseTime + "ms");
+                isYellow = false;
+                timer.removeCallbacks(myRunnable);
+                if(compteur < 6){
+                timer.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        text2.setText("");
+                        start();
+                    }
+                }, 1500);}
+                else{
+                    compteur = 1;
+                    AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
+                    alertDialog.setTitle("5 essais complétés");
+                    alertDialog.setMessage("Moyenne du temps de réaction " + total/5 + " ms");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                    start();
+                }
             }
+
             else
             {
                 btn.setText("Trop vite!");
                 btn.setBackgroundColor(getResources().getColor(R.color.red));
-                this.timer.cancel();
-                this.start();
+                timer.removeCallbacks(myRunnable);
+                timer.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        start();
+                    }
+                }, 1500);
             }
         }
         else
         {
-            this.start();
+            start();
         }
     }
-
+    };
     public void start()
     {
-        this.started = true;
+        timer = new Handler();
+        text.setVisibility(View.VISIBLE);
+        text2.setVisibility(View.VISIBLE);
+        text.setText("Essai " + compteur + " de 5");
+        started = true;
         int delay = (int) (new Random().nextDouble() * 7000) + 3000;
         Button btn = (Button) findViewById(R.id.button3);
-        btn.setText(getResources().getText(R.string.default_msg));
-        this.timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                MainActivity.activity.isYellow = true;
-                btn.setBackgroundColor(getResources().getColor(R.color.yellow));
-                btn.setText(String.valueOf(delay));
-                MainActivity.activity.startime = System.currentTimeMillis();
+        btn.setText("Veuillez attendre que le bouton soit jaune pour cliquer");
+        btn.setBackgroundColor(getResources().getColor(R.color.gray));
+        timer.postDelayed(myRunnable, delay);
+    }
+
+    Runnable myRunnable = new Runnable() {
+        @Override
+        public void run() {
+            isYellow = true;
+            btn.setBackgroundColor(getResources().getColor(R.color.yellow));
+            MainActivity.activity.startime = System.currentTimeMillis();
             }
-        },delay);
+
+    };
+    public void test(){
+
     }
 }
