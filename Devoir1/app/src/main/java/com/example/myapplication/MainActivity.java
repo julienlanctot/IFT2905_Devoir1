@@ -105,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
             {
                 btn.setText("Trop vite!");
                 btn.setBackgroundColor(getResources().getColor(R.color.red));
+                btn.setClickable(false);
                 timer.removeCallbacks(myRunnable);
                 timer.postDelayed(new Runnable() {
                     @Override
@@ -123,6 +124,7 @@ public class MainActivity extends AppCompatActivity {
     public void start()
     {
         timer = new Handler();
+        btn.setClickable(true);
         text.setVisibility(View.VISIBLE);
         text2.setVisibility(View.VISIBLE);
         text.setText("Essai " + compteur + " de 5");
