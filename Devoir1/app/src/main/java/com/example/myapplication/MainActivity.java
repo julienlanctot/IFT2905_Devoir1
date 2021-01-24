@@ -2,68 +2,88 @@ package com.example.myapplication;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.graphics.Color;
+import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button b1;
-    Handler timer;
-    TextView t1;
 
-    boolean is_invisible;
-    boolean is_bright;
+    private int tries = 1;
+    private int maxTries = 5;
+    private boolean started = false;
+    private boolean isYellow = false;
+    private long startime;
+
+    private Timer timer = new Timer();
+    public static MainActivity activity = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        activity = this;
 
-        is_invisible = true;
-        is_bright = true;
-        b1 = findViewById(R.id.button1);
-        t1 = findViewById(R.id.textView1);
-
-        timer = new Handler();
-        b1.setOnClickListener(b1_listener);
-
-
+        Button btn = (Button) findViewById(R.id.button3);
+        btn.setOnClickListener(new View.OnClickListener()
+        {
+            public void onClick(View v)
+            {
+                MainActivity.activity.clickHandler();
+            }
+        });
     }
 
-
-
-    Runnable timer_listener = new Runnable() {
-        @Override
-        public void run() {
-            if(is_bright){
-                b1.setBackgroundColor(Color.BLUE);
-                is_bright = false;
-            }else{
-                b1.setBackgroundColor(Color.RED);
-                is_bright = true;
+    /**
+     * Method used when user presses the button
+     */
+    public void clickHandler()
+    {
+        Button btn = (Button) findViewById(R.id.button3);
+        if(this.started)
+        {
+            if(this.isYellow)
+            {
+                long elaspeTime = System.currentTimeMillis() - this.startime;
+                btn.setText(String.valueOf(elaspeTime) + "ms");
+                this.startime = System.currentTimeMillis();
+                btn.setBackgroundColor(getResources().getColor(R.color.green));
             }
-
-            timer.postDelayed(timer_listener, 2000);
-        }
-    };
-
-    View.OnClickListener b1_listener = new View.OnClickListener(){
-        @Override
-        public void onClick(View v) {
-
-            if(is_invisible){
-                t1.setVisibility(View.VISIBLE);
-                b1.setBackgroundColor(Color.RED);
-                is_invisible = false;
+            else
+            {
+                btn.setText("Trop vite!");
+                btn.setBackgroundColor(getResources().getColor(R.color.red));
+                this.timer.cancel();
+                this.start();
             }
-            timer_listener.run();
         }
-    };
+        else
+        {
+            this.start();
+        }
+    }
 
-
-
+    public void start()
+    {
+        this.started = true;
+        int delay = (int) (new Random().nextDouble() * 7000) + 3000;
+        Button btn = (Button) findViewById(R.id.button3);
+        btn.setText(getResources().getText(R.string.default_msg));
+        this.timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                MainActivity.activity.isYellow = true;
+                btn.setBackgroundColor(getResources().getColor(R.color.yellow));
+                btn.setText(String.valueOf(delay));
+                MainActivity.activity.startime = System.currentTimeMillis();
+            }
+        },delay);
+    }
 }

@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">My Application</string>
+    <string name="app_name">Devoir1</string>
+    <string name="default_msg">APPUYER SUR LE BOUTON POUR COMENCER</string>
+    <string name="ingame_msg">ATTENDRE QUE LE BOUTON DEVIENNE JAUNE</string>
 </resources>
