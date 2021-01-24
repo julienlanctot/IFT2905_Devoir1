@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
     private long startime;
 
     private Timer timer = new Timer();
+    private TimerTask task;
     public static MainActivity activity = null;
 
     @Override
@@ -70,8 +71,16 @@ public class MainActivity extends AppCompatActivity {
             {
                 btn.setText("Trop vite!");
                 btn.setBackgroundColor(getResources().getColor(R.color.red));
-                this.timer.cancel();
-                this.start();
+                this.task.cancel();
+                this.timer.purge();
+                this.task = new TimerTask() {
+                    @Override
+                    public void run() {
+                        MainActivity.activity.start();
+                    }
+                };
+
+                this.timer.schedule(this.task, 1500);
             }
         }
         else
@@ -87,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
         Button btn = (Button) findViewById(R.id.button3);
         btn.setText(getResources().getText(R.string.ingame_msg));
         btn.setBackgroundColor(getResources().getColor(R.color.gray));
-        this.timer.schedule(new TimerTask() {
+        this.task = new TimerTask() {
             @Override
             public void run() {
                 MainActivity.activity.isYellow = true;
@@ -95,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
                 btn.setText(String.valueOf(delay));
                 MainActivity.activity.startime = System.currentTimeMillis();
             }
-        },delay);
+        };
+        this.timer.schedule(this.task,delay);
     }
 }
