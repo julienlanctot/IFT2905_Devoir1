@@ -55,6 +55,16 @@ public class MainActivity extends AppCompatActivity {
                 btn.setText(String.valueOf(elaspeTime) + "ms");
                 this.startime = System.currentTimeMillis();
                 btn.setBackgroundColor(getResources().getColor(R.color.green));
+
+                this.isYellow = false;
+                this.timer.schedule(new TimerTask(){
+                    @Override
+                    public void run()
+                    {
+                       MainActivity.activity.start();
+                    }
+                }, 1500);
+
             }
             else
             {
@@ -75,7 +85,8 @@ public class MainActivity extends AppCompatActivity {
         this.started = true;
         int delay = (int) (new Random().nextDouble() * 7000) + 3000;
         Button btn = (Button) findViewById(R.id.button3);
-        btn.setText(getResources().getText(R.string.default_msg));
+        btn.setText(getResources().getText(R.string.ingame_msg));
+        btn.setBackgroundColor(getResources().getColor(R.color.gray));
         this.timer.schedule(new TimerTask() {
             @Override
             public void run() {
