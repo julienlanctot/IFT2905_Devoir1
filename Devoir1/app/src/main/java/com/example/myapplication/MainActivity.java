@@ -132,14 +132,11 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
                     alertDialog.show();
-<<<<<<< HEAD
                     timer.removeCallbacks(myRunnable);
                     text2.setText("");
                     start();
-=======
 
 
->>>>>>> William
                 }
             }
 
