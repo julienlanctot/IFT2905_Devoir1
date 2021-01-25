@@ -135,7 +135,6 @@ public class MainActivity extends AppCompatActivity {
                     alertDialog.show();
                     timer.removeCallbacks(myRunnable);
                     text2.setText("");
-                    start();
 
 
                 }
