@@ -25,39 +25,32 @@ public class MainActivity extends AppCompatActivity {
     Button btn;
     TextView text;
     TextView text2;
-    int tries = 1;
-    int maxTries = 5;
     int compteur = 1;
     boolean started = false;
     boolean isYellow = false;
-    boolean isGreen = false;
     long startime;
     long total = 0;
-    ArrayList<Long> test = new ArrayList<Long>();
 
     Handler timer = new Handler();
-
-
-    public static MainActivity activity = null;
-
+    Runnable myRunnable = new Runnable() {
+        @Override
+        public void run() {
+            isYellow = true;
+            btn.setBackgroundColor(getResources().getColor(R.color.yellow));
+            startime = System.currentTimeMillis();
+        }
+    };
     Runnable chronoR = new Runnable() {
         @Override
         public void run() {
             while(true)
             {
-
                 try
                 {
                     Thread.sleep(1);
-                } catch (InterruptedException ex)
-                {
-
-                }
-
+                } catch (InterruptedException ex) {}
                 if(isYellow)
-                {
                     text2.setText(System.currentTimeMillis()-startime + "ms");
-                }
             }
 
         }
@@ -68,7 +61,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        activity = this;
 
         btn = findViewById(R.id.button3);
         text = findViewById(R.id.textView3);
@@ -79,87 +71,81 @@ public class MainActivity extends AppCompatActivity {
         chronoT.start();
     }
 
-    /**
-     * Method used when user presses the button
-     */
-
-
-
-
-    View.OnClickListener b1_listener = new View.OnClickListener(){
+    View.OnClickListener b1_listener = new View.OnClickListener()
+    {
         @Override
-        public void onClick(View v) {
-        if(started)
+        public void onClick(View v)
         {
-            btn.setText("Veuillez cliquer quand le bouton sera jaune");
-            if(isYellow)
+            if(started)
             {
-                long elapseTime = System.currentTimeMillis() - startime;
-                test.add(elapseTime);
-                total = total + elapseTime;
-              //  btn.setText(String.valueOf(elapseTime) + "ms");
-                startime = System.currentTimeMillis();
-                btn.setBackgroundColor(getResources().getColor(R.color.green));
-                compteur++;
-                btn.setText("");
-                //text2.setText("succes ! vous avez clique en" +  elapseTime + "ms");
+                btn.setText("Veuillez cliquer quand le bouton sera jaune");
+                if(isYellow)
+                {
+                    long elapseTime = System.currentTimeMillis() - startime;
+                    total += elapseTime;
+                    startime = System.currentTimeMillis();
+                    btn.setBackgroundColor(getResources().getColor(R.color.green));
+                    compteur++;
+                    btn.setText("");
 
-                isYellow = false;
-                timer.removeCallbacks(myRunnable);
-                if(compteur < 6){
-                timer.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        text2.setText("");
-                        start();
+                    isYellow = false;
+                    timer.removeCallbacks(myRunnable);
+                    if(compteur < 6){
+                        timer.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                text2.setText("");
+                                start();
+                            }
+                        }, 1500);
                     }
-                }, 1500);}
-                else{
-                    compteur = 1;
-                    AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
-                    alertDialog.setTitle("5 essais complétés");
-                    alertDialog.setMessage("Moyenne du temps de réaction " + total/5 + " ms");
-                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                    total = 0;
-                                }
-                            });
-                    alertDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    else
+                    {
+                        compteur = 1;
+                        AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
+                        alertDialog.setTitle("5 essais complétés");
+                        alertDialog.setMessage("Moyenne du temps de réaction " + total/5 + " ms");
+                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                });
+                        alertDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                            @Override
+                            public void onDismiss(DialogInterface dialogInterface) {
+                               reset();
+                            }
+                        });
+                        alertDialog.show();
+                        timer.removeCallbacks(myRunnable);
+                        text2.setText("");
+                    }
+                }
+                else
+                {
+                    btn.setText("Trop vite!");
+                    btn.setBackgroundColor(getResources().getColor(R.color.red));
+                    btn.setClickable(false);
+                    timer.removeCallbacks(myRunnable);
+                    timer.postDelayed(new Runnable() {
                         @Override
-                        public void onDismiss(DialogInterface dialogInterface) {
+                        public void run() {
                             start();
                         }
-                    });
-                    alertDialog.show();
-                    timer.removeCallbacks(myRunnable);
-                    text2.setText("");
-
-
+                    }, 1500);
                 }
             }
-
             else
             {
-                btn.setText("Trop vite!");
-                btn.setBackgroundColor(getResources().getColor(R.color.red));
-                btn.setClickable(false);
-                timer.removeCallbacks(myRunnable);
-                timer.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        start();
-                    }
-                }, 1500);
+                start();
             }
         }
-        else
-        {
-            start();
-        }
-    }
     };
+
+    /**
+     * Method used when launching a new try
+     */
     public void start()
     {
         timer = new Handler();
@@ -175,13 +161,19 @@ public class MainActivity extends AppCompatActivity {
         timer.postDelayed(myRunnable, delay);
     }
 
+    /**
+     * Method to reset the reaction test
+     */
+    public void reset()
+    {
+        total = 0;
+        started = false;
+        text.setVisibility(View.INVISIBLE);
+        text2.setVisibility(View.INVISIBLE);
+        btn.setText(getResources().getString(R.string.default_msg));
+        btn.setBackgroundColor(getResources().getColor(R.color.gray));
+    }
 
-    Runnable myRunnable = new Runnable() {
-        @Override
-        public void run() {
-            isYellow = true;
-            btn.setBackgroundColor(getResources().getColor(R.color.yellow));
-            MainActivity.activity.startime = System.currentTimeMillis();
-            }
-    };
+
+
 }
