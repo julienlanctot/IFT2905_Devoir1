@@ -123,6 +123,7 @@ public class MainActivity extends AppCompatActivity {
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
                                     dialog.dismiss();
+                                    total = 0;
                                 }
                             });
                     alertDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
