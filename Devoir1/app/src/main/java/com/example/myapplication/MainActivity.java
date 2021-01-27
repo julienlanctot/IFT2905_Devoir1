@@ -31,6 +31,9 @@ public class MainActivity extends AppCompatActivity {
     long startime;
     long total = 0;
 
+    /**
+     * Method that allows the application to run
+     */
     Handler timer = new Handler();
     Runnable myRunnable = new Runnable() {
         @Override
@@ -40,6 +43,10 @@ public class MainActivity extends AppCompatActivity {
             startime = System.currentTimeMillis();
         }
     };
+
+    /**
+     * Method that allows the chronometer to start as the application is running
+     */
     Runnable chronoR = new Runnable() {
         @Override
         public void run() {
@@ -57,6 +64,10 @@ public class MainActivity extends AppCompatActivity {
     };
     Thread chronoT = new Thread(chronoR);
 
+    /**
+     * Method that intialize the application activity
+     * @param savedInstanceState Save the instances of the application activity
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,6 +82,11 @@ public class MainActivity extends AppCompatActivity {
         chronoT.start();
     }
 
+    /**
+     * Method that controls the interface of the application such as the buttons and the dialogs
+     * when the user is running the application
+     * @param v Graphical user interface
+     */
     View.OnClickListener b1_listener = new View.OnClickListener()
     {
         @Override
