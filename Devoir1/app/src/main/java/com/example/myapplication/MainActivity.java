@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
                     startime = System.currentTimeMillis();
                     btn.setBackgroundColor(getResources().getColor(R.color.green));
                     compteur++;
-                    btn.setText("");
+                    btn.setText("SUCCÈS");
 
                     isYellow = false;
                     timer.removeCallbacks(myRunnable);
