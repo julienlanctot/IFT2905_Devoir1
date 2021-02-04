@@ -3,29 +3,21 @@ package com.example.myapplication;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import org.w3c.dom.Text;
-
-import java.util.ArrayList;
 import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
 
     Button btn;
     TextView text;
     TextView text2;
-    int compteur = 1;
+    int counter = 1;
     boolean started = false;
     boolean isYellow = false;
     long startime;
@@ -73,9 +65,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        btn = findViewById(R.id.button3);
-        text = findViewById(R.id.textView3);
-        text2 = findViewById(R.id.textView4);
+        btn = findViewById(R.id.button);
+        text = findViewById(R.id.textView1);
+        text2 = findViewById(R.id.textView2);
 
         btn.setOnClickListener(b1_listener);
 
@@ -99,14 +91,13 @@ public class MainActivity extends AppCompatActivity {
                 {
                     long elapseTime = System.currentTimeMillis() - startime;
                     total += elapseTime;
-                    startime = System.currentTimeMillis();
                     btn.setBackgroundColor(getResources().getColor(R.color.green));
-                    compteur++;
-                    btn.setText("SUCCÈS");
+                    counter++;
+                    btn.setText(getResources().getString(R.string.success));
 
                     isYellow = false;
                     timer.removeCallbacks(myRunnable);
-                    if(compteur < 6){
+                    if(counter < 6){
                         timer.postDelayed(new Runnable() {
                             @Override
                             public void run() {
@@ -117,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     else
                     {
-                        compteur = 1;
+                        counter = 1;
                         AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
                         alertDialog.setTitle("5 essais complétés");
                         alertDialog.setMessage("Moyenne du temps de réaction " + total/5 + " ms");
@@ -140,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    btn.setText("Trop vite!");
+                    btn.setText(getResources().getString(R.string.too_fast));
                     btn.setBackgroundColor(getResources().getColor(R.color.red));
                     btn.setClickable(false);
                     timer.removeCallbacks(myRunnable);
@@ -168,10 +159,9 @@ public class MainActivity extends AppCompatActivity {
         btn.setClickable(true);
         text.setVisibility(View.VISIBLE);
         text2.setVisibility(View.VISIBLE);
-        text.setText("Essai " + compteur + " de 5");
+        text.setText("Essai " + counter + " de 5");
         started = true;
         int delay = (int) (new Random().nextDouble() * 7000) + 3000;
-        Button btn = (Button) findViewById(R.id.button3);
         btn.setText(getResources().getText(R.string.ingame_msg));
         btn.setBackgroundColor(getResources().getColor(R.color.gray));
         timer.postDelayed(myRunnable, delay);

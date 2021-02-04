@@ -2,4 +2,6 @@
     <string name="app_name">Devoir1</string>
     <string name="default_msg">APPUYER SUR LE BOUTON POUR COMMENCER</string>
     <string name="ingame_msg">VEUILLEZ ATTENDRE QUE LE BOUTON DEVIENNE JAUNE</string>
+    <string name="success">Temps enregistré!</string>
+    <string name="too_fast">Vous êtes allés trop vite!</string>
 </resources>
